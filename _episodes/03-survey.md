@@ -1,6 +1,6 @@
 ---
 title: "Survey"
-slug: Lesson Title-survey
+slug: Principles of Code Scaling-survey
 layout: page
 ---
 
