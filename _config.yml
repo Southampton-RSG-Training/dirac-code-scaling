@@ -8,11 +8,11 @@ kind: "lesson"
 type: "episode" # The other valid option is "episode_r"
 
 # Overall title for pages.
-title: "Lesson Title"
-form_title: "Lesson+Title" # This is required for the surveys
+title: "Principles of Code Scaling"
+form_title: "Principles+of+Code+Scaling" # This is required for the surveys
 
 # Email address, no mailto:
-email: "rsginfo@soton.ac.uk"
+email: "email@dirac.org"
 
 # Specify the location of the workshop
 venue: "TBC"           # name of location use "online" if online
