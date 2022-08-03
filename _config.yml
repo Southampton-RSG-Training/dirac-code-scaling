@@ -13,7 +13,7 @@ title: "Principles of Code Scaling"
 form_title: "Principles+of+Code+Scaling" # This is required for the surveys
 
 # Email address, no mailto:
-email: "email@dirac.org"
+email: "richard.regan@durham.ac.uk"
 logo_site: "https://dirac.ac.uk/"
 
 # For static delivery this section can all be ignored ==================================================================
@@ -46,7 +46,7 @@ carpentry: "rsg"
 # Life cycle stage of the lesson
 # See this page for more details: https://cdh.carpentries.org/the-lesson-life-cycle.html
 # Possible values: "pre-alpha", "alpha", "beta", "stable"
-life_cycle: "stable"
+life_cycle: "alpha"
 
 # Magic to make URLs resolve both locally and on GitHub.
 # See https://help.github.com/articles/repository-metadata-on-github-pages/.
