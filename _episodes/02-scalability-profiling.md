@@ -40,11 +40,13 @@ In the following example we have a simple piece of code that calculates π. When
 > Our π program uses the popular [Message Passing Interface (MPI)](https://en.wikipedia.org/wiki/Message_Passing_Interface) standard to enable communication between each of the parallel portions of code, running on separate CPU cores. It's been around since the mid-1990's and is widely available on many operating systems. MPI also is designed to make use of multiple cores on a variety of platforms, from a multi-core laptop to large-scale HPC resources such as those available on DiRAC. There are many available [tutorials](https://hpc-tutorials.llnl.gov/mpi/) on MPI.
 {: .callout}
 
-By using MPI, we can reduce the run time of our code by using more cores, without affecting the results. The speedup shown in the table above was calculated using,
+By using MPI, we can reduce the run time of our code by using more cores, without affecting the results. The speedup shown in the table above was calculated using, e.g. with 1 core:
 
 > *Speedup = T<sub>1</sub> / T<sub>n</sub>*
 
- The speedup efficiency, which measures how efficiently the additional resources are being used, is,
+Where *T<sub>1</sub>* denotes the time taken to run the code with only 1 core, and *T<sub>n</sub>* denotes the time taken to run the code with `n` cores.
+
+The speedup efficiency, which measures how efficiently the additional resources are being used, is,
 
 > *Efficiency<sub>n</sub> = Speedup<sub>n</sub> / n*,
 

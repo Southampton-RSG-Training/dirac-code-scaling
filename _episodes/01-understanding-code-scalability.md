@@ -43,13 +43,16 @@ Once we understand these scaling profiles for our code, we'll have an idea of th
 
 ## I'm a Developer, Should I Optimise my Code?
 
-As a developer, if your code happens to take too long to run or scales badly it's tempting to dive in and try to optimise it straight away. But before you do, consider the following [three rules of optimisation](https://wiki.c2.com/?RulesOfOptimization):
+As a developer, if your code happens to take too long to run or scales badly it's tempting to dive in and try to optimise it straight away. But before you do, consider the following [rules of optimisation](https://hackernoon.com/the-rules-of-optimization-why-so-many-performance-efforts-fail-cf06aad89099):
 
 1. Don't,
 2. Don't... *yet*, and,
+
+Another rule is sometimes added:
+
 3. If you must optimise your code, *profile* it first.
 
-In non-trivial cases premature optimisation is regarded as bad practice, since optimisation may lead to additional code complexity, incorrect results and reduced readability, making the code harder to understand and maintain. It is often effort-intensive, and difficult at a low level, particularly with modern compilers and interpreters, to improve on or anticipate the optimisations they already implement. A general maxim is to focus on writing understandable code and getting things working first - the former helps with the latter. Then, once strong and weak scaling profiles have been measured, if optimisation is justified you can *profile* your code, and work out where the majority of time is being spent and how best to optimise it.
+In non-trivial cases premature optimisation is regarded as bad practice, since optimisation may lead to additional code complexity, incorrect results and reduced readability, making the code harder to understand and maintain. It is often effort-intensive, and difficult at a low level, particularly with modern compilers and interpreters, to improve on or anticipate the optimisations they already implement. A general maxim is to focus on writing understandable code and getting things working first - the former helps with the latter. Then, once strong and weak scaling profiles have been measured, if optimisation is justified you can *profile* your code, and work out where the majority of time is being spent and how best to optimise it. If you want to take this philosophy further, consider the [Rules of Optimisation Club](https://perlbuzz.com/2008/02/19/the_rules_of_optimization_club/).
 
 So what is *profiling*? Profiling your code is all about understanding its complexity and performance characteristics. The usual intent of profiling is to work out how best to *optimise* your code to improve its performance in some way, typically in terms of speedup or memory and disk usage. In particular, profiling helps identify *where* bottlenecks exist in your code, and helps avoid summary judgments and guesses which will often lead to unnecessary optimisations.
 
