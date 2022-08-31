@@ -33,10 +33,10 @@ in a restaurant. If you can relate to an instance where you had to wait for a
 while in a queue to get in to a popular restaurant, then you may now understand
 why sometimes your job do not start instantly as in your laptop.
 
-![Compare a job scheduler to a waiter in a restaurant]({{ site.url }}{{ site.baseurl }}/fig/restaurant-queue-manager.svg){: width="650px"}
+![Compare a job scheduler to a waiter in a restaurant]({{ site.url }}{{ site.baseurl }}/fig/restaurant_queue_manager.svg){: width="650px"}
 
-The scheduler used in this lesson is {{ site.sched.name }}. Although
-{{ site.sched.name }} is not used everywhere, running jobs is quite similar
+The scheduler used in this lesson is Slurm. Although
+Slurm is not used everywhere, running jobs is quite similar
 regardless of what software is being used. The exact syntax might change, but
 the concepts remain the same.
 
@@ -82,16 +82,13 @@ hostname
 >
 > > ## Solution
 > >
-> > ```
+> > ``` bash
 > > [yourUsername@login7a [cosma7] ~]$ bash example-job.sh
 > > ```
 > > {: .language-bash}
 > > ```
 > > This script is running on login7a
 > > ```
-> > 
-> {: .output}
-> 
 >{: .solution}
 {: .challenge}
 
@@ -215,13 +212,13 @@ with your site's default resources, which is probably not what you want.
 
 The following are several key resource requests:
 
---ntasks=<ntasks> or -n <ntasks>: How many CPU cores does your job need, in total?
+- `--ntasks=<ntasks>` or `-n <ntasks>`: How many CPU cores does your job need, in total?
 
---time <days-hours:minutes:seconds> or -t <days-hours:minutes:seconds>: How much real-world time (walltime) will your job take to run? The <days> part can be omitted.
+- `--time <days-hours:minutes:seconds>` or `-t <days-hours:minutes:seconds>`: How much real-world time (walltime) will your job take to run? The `<days>` part can be omitted.
 
---mem=<megabytes>: How much memory on a node does your job need in megabytes? You can also specify gigabytes using by adding a little “g” afterwards (example: --mem=5g)
+- `--mem=<megabytes>`: How much memory on a node does your job need in megabytes? You can also specify gigabytes using by adding a little “g” afterwards (example: `--mem=5g`)
 
---nodes=<nnodes> or -N <nnodes>: How many separate machines does your job need to run on? Note that if you set ntasks to a number greater than what one machine can offer, Slurm will set this value automatically.
+- `--nodes=<nnodes>` or `-N <nnodes>`: How many separate machines does your job need to run on? Note that if you set `ntasks` to a number greater than what one machine can offer, Slurm will set this value automatically.
 
 Note that just _requesting_ these resources does not make your job run faster,
 nor does it necessarily mean that you will consume all of these resources. It
@@ -253,9 +250,6 @@ later episode of this lesson.
 > > sleep 20 # time in seconds
 > > hostname
 > > ```
-> > 
-> {: .output}
-> 
 > >
 > > ```bash
 > > [yourUsername@login7a [cosma7] ~]$ sbatch example-job.sh
@@ -290,6 +284,7 @@ later episode of this lesson.
 > > ```
 > > {: .language-bash}
 >{: .solution}
+{: .challenge}
 
 Resource requests are typically binding. If you exceed them, your job will be
 killed. Let's use wall time as an example. We will request 1 minute of
@@ -388,6 +383,7 @@ successful.
 > Try submitting multiple jobs and then cancelling them all.
 > 
 > > ## Solution
+> > 
 > > First, submit a trio of jobs:
 > >
 > > ```
@@ -454,6 +450,8 @@ Sometimes, you will need a lot of resource for interactive use. Perhaps it’s o
 {: .language-bash}
 
 You should be presented with a bash prompt. Note that the prompt will likely change to reflect your new location, in this case the compute node we are logged on. You can also verify this with `hostname`.
+
+When you are done with the interactive job, type `exit` to quit your session.
 
 {% include links.md %}
 
