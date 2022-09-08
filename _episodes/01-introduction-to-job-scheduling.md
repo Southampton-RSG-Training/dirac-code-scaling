@@ -9,14 +9,15 @@ questions:
 - "How do I capture the output of a program that is run on a node in the
   cluster?"
 objectives:
-- "Submit a simple script to the cluster."
+- "Submit a simple script to the cluster using Slurm."
 - "Monitor the execution of jobs using command line tools."
 - "Describe the basic states through which a submitted job progresses to completion or failure."
 - "Inspect the output and error files of your jobs."
-- "Find the right place to put large datasets on the cluster."
+- "Cancel a running job."
 keypoints:
 - "The scheduler handles how compute resources are shared between users."
 - "A job is just a shell script."
+- "Use `sbatch`, `squeue`, and `scancel` commandsto run, monitor, and cancel jobs respectively."
 - "Request _slightly_ more resources than you will need."
 ---
 
@@ -42,6 +43,8 @@ the concepts remain the same.
 
 ## Running a Batch Job
 
+### A Basic Script
+
 The most basic use of the scheduler is to run a command non-interactively. Any
 command (or series of commands) that you want to run on the cluster is called a
 _job_, and the process of using a scheduler to run the job is called _batch job
@@ -64,6 +67,8 @@ manner. Our shell script will have three parts:
 * On the last line, we'll invoke the `hostname` command, which will print the
   name of the machine the script is run on.
 
+Let's use `nano` to write this script.
+
 ```
 [yourUsername@login7a [cosma7] ~]$ nano example-job.sh
 ```
@@ -75,6 +80,9 @@ echo -n "This script is running on "
 hostname
 ```
 {: .output}
+
+You can then use <kbd>Ctrl-O</kbd> followed by <kbd>Enter</kbd> to save the file,
+and <kbd>Ctrl-X</kbd> to exit the editor.
 
 > ## Creating Our Test Job
 >
@@ -92,6 +100,8 @@ hostname
 >{: .solution}
 {: .challenge}
 
+### Submitting the Job
+
 This script ran on the login node, but we want to take advantage of
 the compute nodes: we need the scheduler to queue up `example-job.sh`
 to run on a compute node.
@@ -107,36 +117,61 @@ available to perform the work.
 ```
 {: .language-bash}
 
+However, running the script in its current form may yield an error like the following:
+
+~~~
+sbatch: error: A valid account is required (use -A and a DiRAC project or Unix group)
+sbatch: error: Batch job submission failed: Unspecified error
+~~~
+{: .output}
+
+In this case, it's telling us that we need to specify more details for submitting it. As it turns out, as a minimum for COSMA we need to specify the following:
+
+- *Our account*: this is the systems budgetary account to which we individually are assigned. You can find out the accounts you have access to by using the `sacctmgr list user yourUsername` command.
+- *Partition*: HPC system resources are typically split by type (such as cpu, gpu, large memory, etc.), or some other classification, into partitions. The configuration of these varies from system to system, but essentially are different queues to which you may submit your job. You may only be authorised to use specific partitions/queues.
+- *Walltime*: the maximum amount of real-world time your job will take to run, specified as `days-hours:minutes:seconds` (the `days` can be omitted).
+
+Note that depending on the system, other minimal parameters may also be necessary such as specifying a desired quality of service, or the minimum number of required nodes. But we'll leave these for now.
+
+We can specify them on the command line when submitting our job, like the following. Our job is very short running, so let's just give it a maximum wall time of 1 minute:
+
+```
+$ sbatch --account=yourAccount --partition=cosma7 --time=00:01:00 example-job.sh
+```
+{: .language-bash}
+
 ```
 Submitted batch job 36855
 ```
 {: .output}
 
-And that's all we need to do to submit a job. Our work is done -- now the
-scheduler takes over and tries to run the job for us. While the job is waiting
-to run, it goes into a list of jobs called the _queue_. To check on our job's
-status, we check the queue using the command
-`squeue -u yourUsername`.
+And that's what we need to do to submit a job. Our work is done -- now the
+scheduler takes over and tries to run the job for us.
+
+### Monitoring our job
+
+While the job is waiting to run, it goes into a list of jobs called the _queue_. 
+To check on our job's status, we check the queue using the command `squeue`:
 
 ``` bash
 [yourUsername@login7a [cosma7] ~]$ squeue -u yourUsername
 ```
 {: .language-bash}
 
+You may find it looks like this:
+
 ```
-JOBID USER         ACCOUNT     NAME           ST REASON START_TIME         T...
-36856 yourUsername yourAccount example-job.sh R  None   2017-07-01T16:47:02 ...
+  JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+5791510 cosma7-pa example- yourUser PD       0:00      1 (Priority)
 ```
 {: .language-bash}
 
-FIXME: check below
+We can see all the details of our job, including the partition, user, and also the state of the job (in the `ST` column). In this case, we can see it is in the PD or PENDING state. Typically, jobs go through the following states:
 
-We can see all the details of our job, most importantly that it is in the R or RUNNING state. Sometimes our jobs might need to wait in a queue (PENDING) or have an error (E).
-
-> ## So what about other job states?
-> 
-> FIXME: add other basic job states
-{: .callout}
+- `PD` - *pending*: sometimes our jobs might need to wait in a queue first before they can be allocated to a node to run
+- `R` - *running*: job has an allocation and is currently running
+- `CG` - *completing*: job is in the process of completing
+- 
 
 > ## Where's the Output?
 >
@@ -145,16 +180,26 @@ We can see all the details of our job, most importantly that it is in the R or R
 > nothing was printed to the terminal.
 >
 > Cluster job output is typically redirected to a file in the directory you
-> launched it from. Use `ls` to find and `cat` to read the file.
+> launched it from. on DiRAC, for example, the output file looks like `slurm-<job_number>.out`,
+> with `<job_number>` representing the unique identifier for the job.
+> Use `ls` to find and `cat` to read the file.
 {: .callout}
+
+## So what about other job states?
+
 
 ## Customising a Job
 
-The job we just ran used all of the scheduler's default options. In a
-real-world scenario, that's probably not what we want. The default options
-represent a reasonable minimum. Chances are, we will need more cores, more
-memory, more time, among other special considerations. To get access to these
-resources we must customize our job script.
+In the job we just ran we didn't specify any detailed requirements, such as the
+number of cpu cores we need, amount of memory, or number of nodes to use. In a
+real-world scenario, that's probably not what we want. Chances are, we will need more cores, more
+memory, more time, among other special considerations.
+
+So far, we've specified job requirements directly on the command line which is
+quick and convenient, but somewhat limited and less clear when specifying many more parameters.
+Plus, we may forget which parameters we used in previous runs, which may be
+critical to reproducing a previous result. The good news is that we can amend
+our submission script directly to include these parameters instead.
 
 Comments in UNIX shell scripts (denoted by `#`) are typically ignored, but
 there are exceptions. For instance the special `#!` comment at the beginning of
@@ -166,17 +211,17 @@ Slurm's special comment is `#SBATCH`. Anything
 following the `#SBATCH` comment is interpreted as an
 instruction to the scheduler.
 
-Let's illustrate this by example. By default, a job's name is the name of the
-script, but the `--job-name` (or `-J` for short) option can be used to change the
-name of a job. Add an option to the script:
-
-```
-[yourUsername@login7a [cosma7] ~]$ cat example-job.sh
-```
-{: .language-bash}
+Let's illustrate this by example. First, we'll add the account, partition, and time
+parameters to the script directly, then give the job itself a different name. By default,
+a job's name is the name of the script, but the `--job-name` (or `-J` for short) option
+can be used to change the name of a job. Amend the `example-job.sh` script to look like
+the following:
 
 ```
 #!/usr/bin/env bash
+#SBATCH --account yourAccount
+#SBATCH --partition cosma7
+#SBATCH --time 00:01:00
 #SBATCH --job-name hello-world
 
 echo -n "This script is running on "
@@ -193,8 +238,8 @@ Submit the job and monitor its status:
 {: .language-bash}
 
 ```
-JOBID USER         ACCOUNT     NAME     ST REASON   START_TIME TIME TIME_LEF...
-38191 yourUsername yourAccount hello-wo PD Priority N/A        0:00 1:00:00 ...
+  JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+5791531 cosma7-pa hello-wo yourUser PD       0:00      1 (Priority)
 ```
 {: .language-bash}
 
@@ -214,8 +259,6 @@ The following are several key resource requests:
 
 - `--ntasks=<ntasks>` or `-n <ntasks>`: How many CPU cores does your job need, in total?
 
-- `--time <days-hours:minutes:seconds>` or `-t <days-hours:minutes:seconds>`: How much real-world time (walltime) will your job take to run? The `<days>` part can be omitted.
-
 - `--mem=<megabytes>`: How much memory on a node does your job need in megabytes? You can also specify gigabytes using by adding a little “g” afterwards (example: `--mem=5g`)
 
 - `--nodes=<nnodes>` or `-N <nnodes>`: How many separate machines does your job need to run on? Note that if you set `ntasks` to a number greater than what one machine can offer, Slurm will set this value automatically.
@@ -229,36 +272,6 @@ run.
 It's best if your requests accurately reflect your job's requirements. We'll
 talk more about how to make sure that you're using resources effectively in a
 later episode of this lesson.
-
-> ## Submitting Resource Requests
->
-> Modify our `hostname` script so that it runs for a minute, then submit a job
-> for it on the cluster.
->
-> > ## Solution
-> >
-> > ``` bash
-> > [yourUsername@login7a [cosma7] ~]$ cat example-job.sh
-> > ```
-> > {: .language-bash}
-> >
-> > ```
-> > #!/usr/bin/env bash
-> > #SBATCH --time 00:01 # timeout in HH:MM
-> > 
-> > echo -n "This script is running on "
-> > sleep 20 # time in seconds
-> > hostname
-> > ```
-> >
-> > ```bash
-> > [yourUsername@login7a [cosma7] ~]$ sbatch example-job.sh
-> > ```
-> > {: .language-bash}
-> >
-> > Why are the Slurm runtime and `sleep` time not identical?
->{: .solution}
-{: .challenge}
 
 > ## Job environment variables
 > 
@@ -274,11 +287,11 @@ later episode of this lesson.
 > > 
 > > ``` bash
 > > #!/usr/bin/env bash
-> > #SBATCH -t 00:00:30
+> > #SBATCH --account yourAccount
+> > #SBATCH --partition cosma7
+> > #SBATCH --time 00:00:30
+> > #SBATCH --job-name hello-world
 > > 
-> > echo -n "This script is running on "
-> > hostname
-> >
 > > echo "This job was launched in the following directory:"
 > > echo ${SLURM_SUBMIT_DIR}
 > > ```
@@ -306,7 +319,7 @@ hostname
 ```
 {: .output}
 
-Submit the job and wait for it to finish. Once it is has finished, check the
+Submit the job and wait for it to finish. Once it has finished, check the
 log file.
 
 ```
@@ -321,10 +334,11 @@ log file.
 {: .language-bash}
 
 ```
-This job is running on:
-gra533
-slurmstepd: error: *** JOB 38193 ON gra533 CANCELLED AT 2017-07-02T16:35:48
-DUE TO TIME LIMIT ***
+====
+Starting job 5791549 at Thu  8 Sep 16:07:02 BST 2022 for user yourUsername.
+Running on nodes: m7231
+====
+This script is running on slurmstepd: error: *** JOB 5791549 ON m7231 CANCELLED AT 2022-09-08T16:08:28 DUE TO TIME LIMIT ***
 ```
 {: .output}
 
@@ -353,10 +367,10 @@ you to cancel it before it is killed!).
 {: .language-bash}
 
 ```
-Submitted batch job 38759
+Submitted batch job 5791551
 
-JOBID USER         ACCOUNT     NAME           ST REASON   TIME TIME_LEFT NOD...
-38759 yourUsername yourAccount example-job.sh PD Priority 0:00 1:00      1  ...
+  JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+5791551 cosma7-pa hello-wo yourUser PD       0:00      1 (Priority)
 ```
 {: .output}
 
@@ -365,14 +379,14 @@ return of your command prompt indicates that the request to cancel the job was
 successful.
 
 ```
-[yourUsername@login7a [cosma7] ~]$ scancel 38759
+[yourUsername@login7a [cosma7] ~]$ scancel 5791551
 # It might take a minute for the job to disappear from the queue...
 [yourUsername@login7a [cosma7] ~]$ squeue -u yourUsername
 ```
 {: .language-bash}
 
 ```
-...(no output from qstat when there are no jobs to display)...
+...(no output when there are no jobs to display)...
 ```
 {: .output}
 
@@ -413,39 +427,24 @@ too much for a login node to handle. A good example of this might be building a
 genome index for alignment with a tool like [HISAT2][hisat]. Fortunately, we
 can run these types of tasks as a one-off with `srun`.
 
-`srun` runs a single command on the cluster and then exits. Let’s demonstrate this by running the `hostname` command with `srun`. (We can cancel an `srun` job with `Ctrl-C`.)
+`srun` runs a single command on the cluster and then exits. Let’s demonstrate this by running the `hostname` command with `srun`. (We can cancel an `srun` job with `Ctrl-C`.) Note that we still need to specify the account, partition, and expected runtime as we would with any job, but in the case of `srun`, we can only specify these on the command line:
 
 ```
-[yourUsername@login7a [cosma7] ~]$ srun hostname
+[yourUsername@login7a [cosma7] ~]$ srun --account=yourAccount --partition=cosma7 --time=00:01:00 hostname
 ```
 {: .language-bash}
 
 ```
-gra752
+somenode.cosma7.network
 ```
 {: .output}
-
-`srun` accepts all of the same options as `sbatch`. However, instead of specifying these in a script, these options are specified on the command-line when starting a job. To submit a job that uses 2 CPUs for instance, we could use the following command:
-
-```
-[yourUsername@login7a [cosma7] ~]$ srun -n 2 echo "This job will use 2 CPUs."
-```
-{: .language-bash}
-
-```
-This job will use 2 CPUs.
-This job will use 2 CPUs.
-```
-{: .output}
-
-Typically, the resulting shell environment will be the same as that for `sbatch`.
 
 ### Interactive jobs
 
 Sometimes, you will need a lot of resource for interactive use. Perhaps it’s our first time running an analysis or we are attempting to debug something that went wrong with a previous job. Fortunately, Slurm makes it easy to start an interactive job with `srun`:
 
 ```
-[yourUsername@login7a [cosma7] ~]$ srun --pty bash
+[yourUsername@login7a [cosma7] ~]$ srun --account=yourAccount --partition=cosma7 --time=00:01:00 --pty bash
 ```
 {: .language-bash}
 

@@ -224,7 +224,7 @@ The above plot shows that the code is highly scalable. We do have an anomaly wit
 
 > ## Profiling Pi Yourself
 >
-> If you would like to reproduce these sample runs on your system, the code is available on the [DiRAC GitHub page](https://github.com/DiRAC-HPC/MPI_PI).
+> If you would like to reproduce these sample runs on your system, the code is available on the [DiRAC GitHub page](https://github.com/DiRAC-HPC/HPC-Skills-Pi).
 {: .callout}
 
 
