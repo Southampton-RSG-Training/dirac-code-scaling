@@ -186,6 +186,24 @@ Using this formula we can calculate a table of the expected maximum speedup for 
 > > How closely do these estimations correlate with your actual results to 16 cores? They should hopefully be similar, since we're working off averages for our serial and parallel proportions.
 > >
 > > Hopefully from your results you will find that we can get close to the maximum speedup calculated earlier, but it requires ever more resources. From our own trial runs, we expect the speedup to drop below 1% at 4096 cores, but it is expected that we would never run this code at these core counts as it would be a waste of resources.
+> >
+> > Using the `3.9967` T<sub>1</sub> starting value, we get the following estimations:
+> >
+> > | Cores (n) | T<sub>n</sub> | Speedup   | Change in Speedup |
+> > |-----------|---------------|-----------|-------------------|
+> > | 1         | 3.99667       | 1         | 0         |
+> > | 2         | 2.067504      | 1.933089  | 0.933089  |
+> > | 4         | 1.102943      | 3.623642  | 1.690553  |
+> > | 8         | 0.620662      | 6.439365  | 2.815723  |
+> > | 16        | 0.379522      | 10.530804 | 4.091439  |
+> > | 32        | 0.258952      | 15.434038 | 4.903234  |
+> > | 64        | 0.198667      | 20.117475 | 4.683437  |
+> > | 128       | 0.168524      | 23.715726 | 3.598251  |
+> > | 256       | 0.153453      | 26.044951 | 2.329225  |
+> > | 512       | 0.145917      | 27.389997 | 1.345046  |
+> > | 1024      | 0.142149      | 28.115998 | 0.726001  |
+> > | 2048      | 0.140265      | 28.493625 | 0.377627  |
+> > | 4096      | 0.139323      | 28.686268 | 0.192643  |
 >{: .solution}
 {: .challenge}
 
