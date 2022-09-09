@@ -1,7 +1,7 @@
 ---
 title: "Understanding Code Scalability"
 slug: dirac-code-scaling-understanding-code-scalability
-teaching: 0
+teaching: 10
 exercises: 0
 questions:
 - "What is code scalability?"
