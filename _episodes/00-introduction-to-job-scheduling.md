@@ -32,7 +32,7 @@ and when.
 The following illustration compares these tasks of a job scheduler to a waiter
 in a restaurant. If you can relate to an instance where you had to wait for a
 while in a queue to get in to a popular restaurant, then you may now understand
-why sometimes your job do not start instantly as in your laptop.
+why sometimes your job does not start instantly as on your laptop.
 
 ![Compare a job scheduler to a waiter in a restaurant]({{ site.url }}{{ site.baseurl }}/fig/restaurant_queue_manager.svg){: width="650px"}
 
@@ -54,7 +54,7 @@ In this case, the job we want to run is a shell script -- essentially a
 text file containing a list of UNIX commands to be executed in a sequential
 manner. Our shell script will have three parts:
 
-* On the very first line, add `#!/usr/bin/env bash`. The `#!`
+* On the very first line, we'll add `#!/usr/bin/env bash`. The `#!`
   (pronounced "hash-bang" or "shebang") tells the computer what program is
   meant to process the contents of this file. In this case, we are telling it
   that the commands that follow are written for the command-line shell (what
@@ -141,7 +141,7 @@ $ sbatch --account=yourAccount --partition=cosma7 --time=00:01:00 example-job.sh
 {: .language-bash}
 
 ```
-Submitted batch job 36855
+Submitted batch job 5791510
 ```
 {: .output}
 
@@ -171,7 +171,9 @@ We can see all the details of our job, including the partition, user, and also t
 - `PD` - *pending*: sometimes our jobs might need to wait in a queue first before they can be allocated to a node to run
 - `R` - *running*: job has an allocation and is currently running
 - `CG` - *completing*: job is in the process of completing
-- 
+- `CD` - *completed*: the job is completed
+
+You can get a full list of job status codes via the [SLURM documentation](https://slurm.schedmd.com/squeue.html#lbAG).
 
 > ## Where's the Output?
 >
@@ -185,13 +187,10 @@ We can see all the details of our job, including the partition, user, and also t
 > Use `ls` to find and `cat` to read the file.
 {: .callout}
 
-## So what about other job states?
-
 
 ## Customising a Job
 
-In the job we just ran we didn't specify any detailed requirements, such as the
-number of cpu cores we need, amount of memory, or number of nodes to use. In a
+In the job we just ran we didn't specify any detailed requirements for what our job will need. In a
 real-world scenario, that's probably not what we want. Chances are, we will need more cores, more
 memory, more time, among other special considerations.
 
@@ -215,14 +214,14 @@ Let's illustrate this by example. First, we'll add the account, partition, and t
 parameters to the script directly, then give the job itself a different name. By default,
 a job's name is the name of the script, but the `--job-name` (or `-J` for short) option
 can be used to change the name of a job. Amend the `example-job.sh` script to look like
-the following:
+the following (amending `yourAccount` accordingly):
 
 ```
 #!/usr/bin/env bash
-#SBATCH --account yourAccount
-#SBATCH --partition cosma7
-#SBATCH --time 00:01:00
-#SBATCH --job-name hello-world
+#SBATCH --account=yourAccount
+#SBATCH --partition=cosma7
+#SBATCH --time=00:01:00
+#SBATCH --job-name=hello-world
 
 echo -n "This script is running on "
 hostname
@@ -250,7 +249,7 @@ Fantastic, we've successfully changed the name of our job!
 
 What about more important changes, such as the number of cores and memory for
 our jobs? One thing that is absolutely critical when working on an HPC system
-is specifying the resources required to run a job. This allows the scheduler to
+is specifying the resources required to run a job, which allows the scheduler to
 find the right time and place to schedule our job. If you do not specify
 requirements (such as the amount of time you need), you will likely be stuck
 with your site's default resources, which is probably not what you want.
@@ -287,10 +286,10 @@ later episode of this lesson.
 > > 
 > > ``` bash
 > > #!/usr/bin/env bash
-> > #SBATCH --account yourAccount
-> > #SBATCH --partition cosma7
-> > #SBATCH --time 00:00:30
-> > #SBATCH --job-name hello-world
+> > #SBATCH --account=yourAccount
+> > #SBATCH --partition=cosma7
+> > #SBATCH --time=00:00:30
+> > #SBATCH --job-name=hello-world
 > > 
 > > echo "This job was launched in the following directory:"
 > > echo ${SLURM_SUBMIT_DIR}
@@ -310,8 +309,10 @@ wall time, and attempt to run a job for two minutes.
 
 ```
 #!/usr/bin/env bash
-#SBATCH -J long_job
-#SBATCH -t 00:01 # timeout in HH:MM
+#SBATCH --account=yourAccount
+#SBATCH --partition=cosma7
+#SBATCH --time=00:00:30
+#SBATCH --job-name=long-job
 
 echo "This script is running on ... "
 sleep 240 # time in seconds
@@ -350,7 +351,7 @@ than they've been given. If another user messes up and accidentally attempts to
 use all of the cores or memory on a node, Slurm will either
 restrain their job to the requested resources or kill the job outright. Other
 jobs on the node will be unaffected. This means that one user cannot mess up
-the experience of others, the only jobs affected by a mistake in scheduling
+the experience of others, so the only jobs affected by a mistake in scheduling
 will be their own.
 
 ## Cancelling a Job
@@ -433,6 +434,8 @@ can run these types of tasks as a one-off with `srun`.
 [yourUsername@login7a [cosma7] ~]$ srun --account=yourAccount --partition=cosma7 --time=00:01:00 hostname
 ```
 {: .language-bash}
+
+Note that given the interactive nature of the job, your terminal will pause until the job is able to be run, so you may have to wait.
 
 ```
 somenode.cosma7.network
