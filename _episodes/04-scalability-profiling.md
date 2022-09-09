@@ -1,8 +1,8 @@
 ---
 title: "Scalability Profiling"
 slug: dirac-code-scaling-scalability-profiling
-teaching: 0
-exercises: 0
+teaching: 45
+exercises: 20
 questions:
 - "How scalable is a particular piece of code?"
 - "How can I generate evidence for a code's scalability?"

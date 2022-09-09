@@ -1,8 +1,8 @@
 ---
 title: "Running Example Code on a Cluster"
 slug: dirac-code-scaling-running-example-code-cluster
-teaching: 45
-exercises: 30
+teaching: 30
+exercises: 20
 questions:
 - "How can we get our (or others') code running on an HPC resource?"
 objectives:
