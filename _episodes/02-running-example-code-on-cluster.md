@@ -188,11 +188,11 @@ Once complete, you should find the output from the job in a slurm output file, f
 Starting job 5791417 at Thu  8 Sep 14:37:45 BST 2022 for user dc-crou1.
 Running on nodes: m7428
 ====
-np= 1;    Time=3.946659s;    PI=3.14159265459;	Error=0.00000003182
-np= 2;    Time=2.024766s;    PI=3.14159265459;	Error=0.00000003182
-np= 4;    Time=1.048654s;    PI=3.14159265459;	Error=0.00000003182
-np= 8;    Time=0.544258s;    PI=3.14159265459;	Error=0.00000003183
-np=16;    Time=0.333816s;    PI=3.14159265459;	Error=0.00000003182
+np= 1;    Time=3.99667s;    PI=3.14159265459;	Error=0.00000003182
+np= 2;    Time=2.064242;    PI=3.14159265459;	Error=0.00000003182
+np= 4;    Time=1.075068s;    PI=3.14159265459;	Error=0.00000003182
+np= 8;    Time=0.687097s;    PI=3.14159265459;	Error=0.00000003182
+np=16;    Time=0.349366s;    PI=3.14159265459;	Error=0.00000003182
 ~~~
 {: .output}
 

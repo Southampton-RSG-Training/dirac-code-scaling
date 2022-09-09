@@ -17,7 +17,7 @@ objectives:
 keypoints:
 - "The scheduler handles how compute resources are shared between users."
 - "A job is just a shell script."
-- "Use `sbatch`, `squeue`, and `scancel` commandsto run, monitor, and cancel jobs respectively."
+- "Use `sbatch`, `squeue`, and `scancel` commands to run, monitor, and cancel jobs respectively."
 - "Request _slightly_ more resources than you will need."
 ---
 
@@ -36,7 +36,7 @@ why sometimes your job do not start instantly as in your laptop.
 
 ![Compare a job scheduler to a waiter in a restaurant]({{ site.url }}{{ site.baseurl }}/fig/restaurant_queue_manager.svg){: width="650px"}
 
-The scheduler used in this lesson is Slurm. Although
+The scheduler used here is Slurm. Although
 Slurm is not used everywhere, running jobs is quite similar
 regardless of what software is being used. The exact syntax might change, but
 the concepts remain the same.
